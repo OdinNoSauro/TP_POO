@@ -1,4 +1,4 @@
-package Tp;
+package TP;
 
 import java.util.Calendar;
 
@@ -10,12 +10,12 @@ public class Movimentacao{
 	private String descricao;
 	private char debitoCredito;
 	private double valor;
-	
-	Movimentacao(int dia, int mes, int ano, int hora, int minuto, String desc, char DC, double val){
-		dataMov = new GregorianCalendar(ano,mes,dia,hora,minuto);
-		descricao = new String(desc);
-		debitoCredito = DC;
-		valor = val;
+
+	public Movimentacao(String desc, char DC, double val){
+		this.dataMov = new GregorianCalendar();
+		this.descricao = new String(desc);
+		this.debitoCredito = DC;
+		this.valor = val;
 	}
 	public GregorianCalendar getData() {
 		return dataMov;
@@ -30,12 +30,12 @@ public class Movimentacao{
 		return debitoCredito;
 	}
 	public static void main(String[] args) {
-		Movimentacao number = new Movimentacao(12,5,2017,8,37,"compra de um carro",'C',32710.00);
+		Movimentacao number = new Movimentacao("compra de um carro",'C',32710.00);
 		double i = number.getValor();
 		char c = number.getTipo();
 		String s = number.getDescricao();
 		GregorianCalendar data = number.getData();
 		System.out.println(i+"\n"+c+"\n"+s);
-		System.out.println("\n"+data.get(Calendar.YEAR)); 
+		System.out.println("\n"+data.get(Calendar.YEAR));
 	}
 }
