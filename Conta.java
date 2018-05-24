@@ -1,9 +1,8 @@
-package TP;
+package banco;
 
 import java.util.List;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Date;
 
 
 public class Conta {
@@ -56,7 +55,7 @@ public class Conta {
     this.saldo += valor;
   }
 
-  public List<Movimentacao> extratoDatado(GregorianCalendar inicio, GregorianCalendar fim){
+  public List<Movimentacao> extratoInicioFim(GregorianCalendar inicio, GregorianCalendar fim){
     List<Movimentacao> listaRetorno = new ArrayList<Movimentacao>();
     for (int i = 0; i < this.movimentacoes.size(); i++){
       if ((this.movimentacoes.get(i).getData() >= inicio) && (this.movimentacoes.get(i).getData() <= fim)){
@@ -66,7 +65,7 @@ public class Conta {
     return listaRetorno;
   }
 
-  public List<Movimentacao> extratoPartindo(GregorianCalendar inicio){
+  public List<Movimentacao> extratoInicio(GregorianCalendar inicio){
     GregorianCalendar fim = new GregorianCalendar();
     List<Movimentacao> listaRetorno = new ArrayList<Movimentacao>();
     for (int i = 0; i < this.movimentacoes.size(); i++){
