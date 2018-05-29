@@ -1,6 +1,6 @@
 package banco;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -8,15 +8,23 @@ import java.util.GregorianCalendar;
 public class Conta {
   private int numConta;
   private double saldo;
-  private Cliente cliente;
-  private List<Movimentacao> movimentacoes = new ArrayList<Movimentacao>();
-  private int proximoNumConta;
+  Cliente cliente;
+  private ArrayList<Movimentacao> movimentacoes = new ArrayList<Movimentacao>();
+  private static int proximoNumConta;
 
   public Conta(Cliente cliente){
-    this.numConta = this.proximoNumConta;
-    this.proximoNumConta += 1;
+	proximoNumConta++;
+	this.numConta = proximoNumConta;
     this.saldo = 0;
     this.cliente = cliente;
+  }
+  
+  public Conta(Cliente cliente, int conta, int proxconta, double saldo) {
+	  this.cliente = cliente;
+	  this.numConta = conta;
+	  if (proxconta > Conta.proximoNumConta)
+		  Conta.proximoNumConta = proxconta;
+	  this.saldo = saldo;
   }
 
   public int getNumConta(){
@@ -28,10 +36,11 @@ public class Conta {
   }
 
   public Cliente getCliente(){
-    return cliente;
+	Cliente client = new Cliente(cliente.getNomeCliente(),cliente.getCpf_cnpj(),cliente.getEndereco(),cliente.getFone());
+    return client;
   }
 
-  public List<Movimentacao> getMovimentacoes(){
+  public ArrayList<Movimentacao> getMovimentacoes(){
     return movimentacoes;
   }
 
@@ -55,36 +64,37 @@ public class Conta {
     this.saldo += valor;
   }
 
-  public List<Movimentacao> extratoInicioFim(GregorianCalendar inicio, GregorianCalendar fim){
-    List<Movimentacao> listaRetorno = new ArrayList<Movimentacao>();
+  public ArrayList<Movimentacao> extratoDatado(GregorianCalendar inicio, GregorianCalendar fim){
+    ArrayList<Movimentacao> listaRetorno = new ArrayList<Movimentacao>();
     for (int i = 0; i < this.movimentacoes.size(); i++){
-      if ((this.movimentacoes.get(i).getData() >= inicio) && (this.movimentacoes.get(i).getData() <= fim)){
-        listaRetorno.add(this.movimentacoes.get(i);
-      }
-    }
-    return listaRetorno;
-  }
-
-  public List<Movimentacao> extratoInicio(GregorianCalendar inicio){
-    GregorianCalendar fim = new GregorianCalendar();
-    List<Movimentacao> listaRetorno = new ArrayList<Movimentacao>();
-    for (int i = 0; i < this.movimentacoes.size(); i++){
-      if ((this.movimentacoes.get(i).getData() >= inicio) && (this.movimentacoes.get(i).getData() <= fim)){
+    	 if (((inicio.compareTo(this.movimentacoes.get(i).getData()))< 0) && ((fim.compareTo(this.movimentacoes.get(i).getData()))> 0)){
         listaRetorno.add(this.movimentacoes.get(i));
       }
     }
     return listaRetorno;
   }
 
-  public List<Movimentacao> extratoMes(){
+  public ArrayList<Movimentacao> extratoPartindo(GregorianCalendar inicio){
+    GregorianCalendar fim = new GregorianCalendar();
+    ArrayList<Movimentacao> listaRetorno = new ArrayList<Movimentacao>();
+    for (int i = 0; i < this.movimentacoes.size(); i++){
+      if (((inicio.compareTo(this.movimentacoes.get(i).getData()))< 0) && ((fim.compareTo(this.movimentacoes.get(i).getData()))> 0)){
+        listaRetorno.add(this.movimentacoes.get(i));
+      }
+    }
+    return listaRetorno;
+  }
+
+  public ArrayList<Movimentacao> extratoMes(){
     GregorianCalendar atual = new GregorianCalendar();
-    List<Movimentacao> listaRetorno = new ArrayList<Movimentacao>();
+    ArrayList<Movimentacao> listaRetorno = new ArrayList<Movimentacao>();
     for (int i = 0; i < this.movimentacoes.size(); i++){
       GregorianCalendar referencia = this.movimentacoes.get(i).getData();
-      if ((referencia.get(referencia.MONTH) == atual.get(atual.MONTH)) && (referencia.get(referencia.YEAR) == atual.get(atual.YEAR))){
+      if ((referencia.get(Calendar.MONTH) == atual.get(Calendar.MONTH)) && (referencia.get(Calendar.YEAR) == atual.get(Calendar.YEAR))){
         listaRetorno.add(this.movimentacoes.get(i));
       }
     }
     return listaRetorno;
   }
+  
 }

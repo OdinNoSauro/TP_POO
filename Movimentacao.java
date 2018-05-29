@@ -1,6 +1,5 @@
 package banco;
 
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 
@@ -16,6 +15,12 @@ public class Movimentacao{
 		this.debitoCredito = DC;
 		this.valor = val;
 	}
+	public Movimentacao(String desc, char DC, double val, int dia, int mes, int ano){
+		this.dataMov = new GregorianCalendar(ano,mes,dia);
+		this.descricao = new String(desc);
+		this.debitoCredito = DC;
+		this.valor = val;
+	}
 	public GregorianCalendar getData() {
 		return dataMov;
 	}
@@ -27,14 +32,5 @@ public class Movimentacao{
 	}
 	public char getTipo() {
 		return debitoCredito;
-	}
-	public static void main(String[] args) {
-		Movimentacao number = new Movimentacao("compra de um carro",'C',32710.00);
-		double i = number.getValor();
-		char c = number.getTipo();
-		String s = number.getDescricao();
-		GregorianCalendar data = number.getData();
-		System.out.println(i+"\n"+c+"\n"+s);
-		System.out.println("\n"+data.get(Calendar.YEAR));
 	}
 }
