@@ -44,22 +44,23 @@ public class Banco{
   }
 
   public int findClient(String documento) {
-	   for (int i = 0; i < this.clientes.size(); i++){
-	      if (this.clientes.get(i).getCpf_cnpj().equals(documento)){
-	        return i;
-	      }
+	  for (int i = 0; i < this.clientes.size(); i++){
+      if (this.clientes.get(i).getCpf_cnpj().equals(documento)){
+        return i;
+	    }
 	  }
-       return -1;
- }
+      return -1;
+  }
+
   public int deleteCliente(String cpf_cnpj){
-	int indiceCliente = findClient(cpf_cnpj);
-	if (indiceCliente == -1)
-		return -1;
+   int indiceCliente = findClient(cpf_cnpj);
+   if (indiceCliente == -1)
+	  return -1;
     for (int i = 0; i < this.contas.size(); i++){
       if (this.contas.get(i).cliente.getCpf_cnpj().equals(cpf_cnpj)){
-    	  return 0;
-      	}
+        return 0;
       }
+    }
     this.clientes.remove(indiceCliente);
     return 1;
   }
@@ -67,7 +68,7 @@ public class Banco{
   public int deleteConta(int numeroConta){
     int indiceConta = getConta(numeroConta);
     if (indiceConta == -1)
-		return -1;
+		  return -1;
     this.contas.remove(indiceConta);
     return 1;
   }
