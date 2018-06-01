@@ -106,20 +106,20 @@ public class Banco{
     }
   }
 
-  public void cobrarCPMF() {
-	GregorianCalendar now = new GregorianCalendar();
-	GregorianCalendar weekago = new GregorianCalendar();
-	weekago.add(Calendar.DAY_OF_MONTH,-7);
-	for (int i = 0; i < this.contas.size(); i++){
-	  double montante = 0;
-	  ArrayList<Movimentacao> extrato = this.contas.get(i).extratoDatado(weekago,now);
-	  for(int j = 0; j< extrato.size();j++) {
-		  if (extrato.get(j).getTipo() == 'D')
-		  montante += extrato.get(j).getValor();
-	  }
-	  double tarifa = 0.0038*montante;
-	  this.contas.get(i).debito(tarifa, "Cobranca de CPMF");
-	}
+  public void cobrarCPMF(){
+  	GregorianCalendar now = new GregorianCalendar();
+  	GregorianCalendar weekago = new GregorianCalendar();
+  	weekago.add(Calendar.DAY_OF_MONTH,-7);
+  	for (int i = 0; i < this.contas.size(); i++){
+  	  double montante = 0;
+  	  ArrayList<Movimentacao> extrato = this.contas.get(i).extratoDatado(weekago,now);
+  	  for(int j = 0; j< extrato.size();j++) {
+  		  if (extrato.get(j).getTipo() == 'D')
+  		  montante += extrato.get(j).getValor();
+  	  }
+  	  double tarifa = 0.0038*montante;
+  	  this.contas.get(i).debito(tarifa, "Cobranca de CPMF");
+  	}
   }
 
   public double saldo(int numeroConta){
@@ -152,7 +152,7 @@ public class Banco{
   public ArrayList<Conta> getListaContas(){
     return this.contas;
   }
-  
+
   public void lerArquivo(String nomeArquivo) {
 	  String nome, linha,documento,endereco,fone, titular,descricao;
 	  double saldo, valor;
@@ -164,30 +164,30 @@ public class Banco{
 		  BufferedReader lerArq = new BufferedReader(arquivo);
 		  linha = lerArq.readLine();
 		  System.out.println(linha);
-		  
+
 		  if (linha.equals("Clientes")) {
 			  linha = lerArq.readLine();
 			  System.out.println(linha);
-			  
+
 			  while (!linha.equals("Contas")) {
-				 
+
 				  System.out.println(linha);
 				  linha = lerArq.readLine();
 				  System.out.println(linha);
 				  nome = linha;
-				  
+
 				  linha = lerArq.readLine();
 				  documento = linha.substring(10);
-				  
+
 				  linha = lerArq.readLine();
 				  endereco = linha.substring(10);
-				  
+
 				  linha = lerArq.readLine();
 				  fone = linha.substring(10);
-				  
+
 				  Cliente client = new Cliente(nome,documento,endereco,fone);
 				  this.addCliente(client);
-				  
+
 				  linha = lerArq.readLine();
 			  }
 		  }
@@ -196,20 +196,20 @@ public class Banco{
 			  while(!linha.equals("Fim")) {
 				  linha = lerArq.readLine();
 				  titular = linha.substring(9);
-				  
+
 				  linha = lerArq.readLine();
 				  documento = linha.substring(10);
-				  
+
 				  linha = lerArq.readLine();
 				  numConta = Integer.parseInt(linha.substring(7));
-				  
+
 				  linha = lerArq.readLine();
 				  saldo = Double.parseDouble(linha.substring(7));
-				  
+
 				  indice = findClient(documento);
-				  
+
 				  Conta cont = new Conta(this.clientes.get(indice),numConta,numConta+1,saldo);
-				  
+
 				  linha = lerArq.readLine();
 				  if (linha.equals("Movimentações")) {
 					  linha = lerArq.readLine();
@@ -222,11 +222,11 @@ public class Banco{
 						  dia = Integer.parseInt(data[0]);
 						  mes = Integer.parseInt(data[1]);
 						  ano = Integer.parseInt(data[2]);
-						  
+
 						  Movimentacao mov = new Movimentacao(descricao,tipo,valor,dia,mes,ano);
-						  
+
 						  cont.getMovimentacoes().add(mov);
-						  
+
 						  linha = lerArq.readLine();
 					  }
 				  }
@@ -239,72 +239,72 @@ public class Banco{
 		  System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
 	  }
   }
-  
+
   public void escreveArquivo (String nomeArquivo) {
 	  String linha,nome,documento,endereco,fone, titular,descricao;
 	  double saldo, valor;
 	  char tipo;
 	  int numConta, indice;
 	  String dia,mes,ano;
-	  
-	  
+
+
 	  try {
 		  FileWriter arquivo = new FileWriter(nomeArquivo);
 		  BufferedWriter escreverArq = new BufferedWriter(arquivo);
-		  
+
 		  escreverArq.write("Clientes");
 		  escreverArq.write("\n");
 		  escreverArq.write("\n");
-		  
+
 		  for(int i = 0; i < this.getListaClientes().size(); i++) {
 			  escreverArq.write("Cliente: "+this.getListaClientes().get(i).getNomeCliente());
 			  escreverArq.write("\n");
-			  
+
 			  escreverArq.write("CPF/CNPJ: "+this.getListaClientes().get(i).getCpf_cnpj());
 			  escreverArq.write("\n");
-			  
+
 			  escreverArq.write("Endereço: "+this.getListaClientes().get(i).getEndereco());
 			  escreverArq.write("\n");
-			  
+
 			  escreverArq.write("Telefone: "+this.getListaClientes().get(i).getFone());
 			  escreverArq.write("\n");
-			  
+
 			  escreverArq.write("\n");
-			  
+
 		  }
-		  
+
 		  escreverArq.write("Contas");
 		  escreverArq.write("\n");
 		  escreverArq.write("\n");
-		  
+
 		  for(int j = 0; j < this.getListaContas().size(); j++) {
 			  escreverArq.write("Titular: "+this.getListaContas().get(j).getCliente().getNomeCliente());
 			  escreverArq.write("\n");
-			  
+
 			  escreverArq.write("CPF/CNPJ: "+this.getListaContas().get(j).getCliente().getCpf_cnpj());
 			  escreverArq.write("\n");
-			  
+
 			  escreverArq.write("Conta: "+this.getListaContas().get(j).getNumConta());
 			  escreverArq.write("\n");
-			  
+
 			  escreverArq.write("Saldo: "+this.getListaContas().get(j).getSaldo());
 			  escreverArq.write("\n");
-			  
+
 			  escreverArq.write("Movimentações");
 			  escreverArq.write("\n");
 			  for (int i = 0; i < this.getListaContas().get(j).getMovimentacoes().size(); i++) {
 				  escreverArq.write(this.getListaContas().get(j).getMovimentacoes().get(i).getDescricao()+", ");
-				
+
 				  escreverArq.write("Valor = "+this.getListaContas().get(j).getMovimentacoes().get(i).getValor()+", ");
-				
+
 				  escreverArq.write(this.getListaContas().get(j).getMovimentacoes().get(i).getTipo()+", ");
-				  
+
 				  GregorianCalendar data = this.getListaContas().get(j).getMovimentacoes().get(i).getData();
 				  dia = Integer.toString(data.get(Calendar.DATE));
 				  mes = Integer.toString(data.get(Calendar.MONTH));
 				  ano = Integer.toString(data.get(Calendar.YEAR));
 				  escreverArq.write("Data: "+dia+"/"+mes+"/"+ano);
-				  
+
 				  escreverArq.write("\n");
 			  }
 		  }
@@ -313,7 +313,5 @@ public class Banco{
 	  }catch(IOException e) {
 		  System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
 	  }
-	  
   }
-  	  
 }
