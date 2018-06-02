@@ -10,11 +10,11 @@ public class Conta {
   private double saldo;
   Cliente cliente;
   private ArrayList<Movimentacao> movimentacoes = new ArrayList<Movimentacao>();
-  private static int proximoNumConta;
+  private static int proximoNumConta = 1;
 
   public Conta(Cliente cliente){
-	proximoNumConta++;
 	this.numConta = proximoNumConta;
+	proximoNumConta++;
     this.saldo = 0;
     this.cliente = cliente;
   }
@@ -48,13 +48,14 @@ public class Conta {
     return proximoNumConta;
   }
 
-  public void debito(double valor, String descricao){
+  public int debito(double valor, String descricao){
     if (this.saldo >= valor){
       Movimentacao movimentacaoDebito = new Movimentacao(descricao, 'D', valor);
       this.movimentacoes.add(movimentacaoDebito);
       this.saldo -= valor;
+      return 1;
     }else{
-      System.out.println("O saldo atual não é suficiente.");
+      return 0;
     }
   }
 

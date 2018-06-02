@@ -3,6 +3,8 @@ package banco;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.Objects;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 
 public class Banco{
   private String nomeBanco;
@@ -94,10 +97,12 @@ public class Banco{
     int destino = getConta(contaDestino);
     if (origem == -1 || destino == -1)
     	return -1;
-    String mensagemOrigem = "Transferencia para a conta " + destino;
-    String mensagemDestino = "Transferencia da conta " + origem;
-    this.contas.get(contaOrigem).debito(valor, mensagemOrigem);
-    this.contas.get(contaDestino).credito(valor, mensagemDestino);
+    String mensagemOrigem = "Transferencia para a conta " + contaDestino;
+    String mensagemDestino = "Transferencia da conta " + contaOrigem;
+    int sucesso =this.contas.get(origem).debito(valor, mensagemOrigem);
+    if (sucesso == 0)
+    	return 0;
+    this.contas.get(destino).credito(valor, mensagemDestino);
     return 1;
   }
 
@@ -159,24 +164,18 @@ public class Banco{
 	  double saldo, valor;
 	  char tipo;
 	  int numConta, indice,dia,mes,ano;
-	  String[] dados,data;
+	  String[] dados,data,value;
 	  try {
 		  FileReader arquivo = new FileReader(nomeArquivo);
 		  BufferedReader lerArq = new BufferedReader(arquivo);
 		  linha = lerArq.readLine();
-		  System.out.println(linha);
-
+		  if (lerArq.readLine()!=null) {
 		  if (linha.equals("Clientes")) {
-			  linha = lerArq.readLine();
-			  System.out.println(linha);
 
-			  while (!linha.equals("Contas")) {
-
-				  System.out.println(linha);
-				  linha = lerArq.readLine();
-				  System.out.println(linha);
-				  nome = linha;
-
+			  while (!((linha = lerArq.readLine()).equals(new String("Contas")))) {
+				  
+				  nome = linha.substring(9);
+				  
 				  linha = lerArq.readLine();
 				  documento = linha.substring(10);
 
@@ -190,12 +189,12 @@ public class Banco{
 				  this.addCliente(client);
 
 				  linha = lerArq.readLine();
+
 			  }
 		  }
-		  else if (linha.equals("Contas")) {
+		  if (linha.equals(new String("Contas"))) {
 			  linha = lerArq.readLine();
-			  while(!linha.equals("Fim")) {
-				  linha = lerArq.readLine();
+			  while(!((linha = lerArq.readLine()).equals(new String("Fim")))) {
 				  titular = linha.substring(9);
 
 				  linha = lerArq.readLine();
@@ -205,36 +204,36 @@ public class Banco{
 				  numConta = Integer.parseInt(linha.substring(7));
 
 				  linha = lerArq.readLine();
-				  saldo = Double.parseDouble(linha.substring(7));
+				  saldo = Double.parseDouble(linha.substring(10));
 
 				  indice = findClient(documento);
 
 				  Conta cont = new Conta(this.clientes.get(indice),numConta,numConta+1,saldo);
 
-				  linha = lerArq.readLine();
-				  if (linha.equals("Movimentações")) {
-					  linha = lerArq.readLine();
-					  while(!linha.isEmpty()) {
+				  if (((linha = lerArq.readLine()).equals(new String("Movimentações")))) {
+					 while(!((linha = lerArq.readLine()).equals(new String("Fim das movimentações")))) {
 						  dados = linha.split(",");
 						  descricao = dados[0];
-						  valor = Double.parseDouble(dados[1].substring(9));
+						  value = dados[1].split("=");
+						  valor = Double.parseDouble(value[1].substring(1));
 						  tipo = dados[2].substring(1).charAt(0);
 						  data = dados[3].substring(7).split("/");
 						  dia = Integer.parseInt(data[0]);
 						  mes = Integer.parseInt(data[1]);
+						  mes = mes - 1;
 						  ano = Integer.parseInt(data[2]);
 
 						  Movimentacao mov = new Movimentacao(descricao,tipo,valor,dia,mes,ano);
 
 						  cont.getMovimentacoes().add(mov);
-
-						  linha = lerArq.readLine();
+						  
 					  }
 				  }
 				  this.contas.add(cont);
 				  linha = lerArq.readLine();
 			  }
 		  }
+		 }
 		  lerArq.close();
 	  } catch (IOException e) {
 		  System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
@@ -242,12 +241,10 @@ public class Banco{
   }
 
   public void escreveArquivo (String nomeArquivo) {
-	  String linha,nome,documento,endereco,fone, titular,descricao;
-	  double saldo, valor;
-	  char tipo;
-	  int numConta, indice;
 	  String dia,mes,ano;
-
+	  Locale.setDefault(new Locale("en","US"));
+	  DecimalFormat df = new DecimalFormat();
+	  df.applyPattern("R$ 0.00");
 
 	  try {
 		  FileWriter arquivo = new FileWriter(nomeArquivo);
@@ -288,7 +285,7 @@ public class Banco{
 			  escreverArq.write("Conta: "+this.getListaContas().get(j).getNumConta());
 			  escreverArq.write("\n");
 
-			  escreverArq.write("Saldo: "+this.getListaContas().get(j).getSaldo());
+			  escreverArq.write("Saldo: "+df.format(this.getListaContas().get(j).getSaldo()));
 			  escreverArq.write("\n");
 
 			  escreverArq.write("Movimentações");
@@ -302,12 +299,13 @@ public class Banco{
 
 				  GregorianCalendar data = this.getListaContas().get(j).getMovimentacoes().get(i).getData();
 				  dia = Integer.toString(data.get(Calendar.DATE));
-				  mes = Integer.toString(data.get(Calendar.MONTH));
+				  mes = Integer.toString(data.get(Calendar.MONTH)+1);
 				  ano = Integer.toString(data.get(Calendar.YEAR));
 				  escreverArq.write("Data: "+dia+"/"+mes+"/"+ano);
 
 				  escreverArq.write("\n");
 			  }
+			  escreverArq.write("Fim das movimentações\n\n");
 		  }
 		  escreverArq.write("Fim");
 		  escreverArq.close();

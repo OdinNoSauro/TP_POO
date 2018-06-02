@@ -1,13 +1,9 @@
 package tp;
 
 import banco.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Scanner;
@@ -62,7 +58,11 @@ public class Interface {
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Insira o cpf ou cnpj do cliente que deseja escluir: ");
 		cpf = scanner.nextLine();
-		Interface.bs.deleteCliente(cpf);
+		int sucesso = Interface.bs.deleteCliente(cpf);
+		if (sucesso == 1)
+			System.out.println("Cliente excluido com sucesso");
+		else
+			System.out.println("Falha na esclusão: cliente possui um conta");
 	}
 	public static void deleteConta (int cont) {
 		int sucesso = Interface.bs.deleteConta(cont);
@@ -92,6 +92,8 @@ public class Interface {
 		int sucesso = Interface.bs.transferencia(origem, destino, valor);
 		if (sucesso == -1)
 			System.out.println("Conta inexistente");
+		else if (sucesso == 0)
+			System.out.println("O saldo atual não é suficiente.");
 		else 
 			System.out.println("Tranferência realizada com sucesso");
 	}
@@ -112,33 +114,36 @@ public class Interface {
 		else
 			System.out.println("Conta inexistente");
 	}
-	public static ArrayList<Movimentacao> extrato (int numConta) {
+	public static void extrato (int numConta) {
 		int opc;
 		int dia, mes, ano;
+		ArrayList<Movimentacao> extrato;
 		System.out.println("Escolha a opção de extrato: ");
-		System.out.println("(1) Extrato do último mês ");
+		System.out.println("(1) Extrato do mês atual ");
 		System.out.println("(2) Extrato a partir de uma data ");
 		System.out.println("(3) Extrato de um período personalizado");
 		Scanner scanner = new Scanner(System.in);
 		opc = scanner.nextInt();
 		if (opc == 1) {
-			return Interface.bs.extratoMesAtual(numConta);
+			extrato = Interface.bs.extratoMesAtual(numConta);
 		}
 		else if (opc == 2) {
 			System.out.print("Insira o dia: ");
 			dia = scanner.nextInt();
 			System.out.print("Insira o mês: ");
 			mes = scanner.nextInt();
+			mes = mes -1;
 			System.out.print("Insira o ano: ");
 			ano = scanner.nextInt();
 			GregorianCalendar inicio = new GregorianCalendar(ano,mes,dia);
-			return Interface.bs.extratoDataInicial(numConta, inicio);
+			extrato = Interface.bs.extratoDataInicial(numConta, inicio);
 		}
 		else if (opc == 3) {
 			System.out.print("Insira o dia do inicio: ");
 			dia = scanner.nextInt();
 			System.out.print("Insira o mês do inicio: ");
 			mes = scanner.nextInt();
+			mes = mes -1;
 			System.out.print("Insira o ano do inicio: ");
 			ano = scanner.nextInt();
 			GregorianCalendar inicio = new GregorianCalendar(ano,mes,dia);
@@ -146,12 +151,30 @@ public class Interface {
 			dia = scanner.nextInt();
 			System.out.print("Insira o mês do fim: ");
 			mes = scanner.nextInt();
+			mes = mes -1;
 			System.out.print("Insira o ano do fim: ");
 			ano = scanner.nextInt();
 			GregorianCalendar fim = new GregorianCalendar(ano,mes,dia);
-			return Interface.bs.extratoEntreDatas(numConta, inicio, fim);
-		}else
-			return null;
+			extrato = Interface.bs.extratoEntreDatas(numConta, inicio, fim);
+		}else {
+			System.out.println("Opção inválida");
+			return;
+		}
+		for (int j = 0; j < extrato.size();j++) {
+			  System.out.print(extrato.get(j).getDescricao()+", ");
+
+			  System.out.print("Valor = "+ extrato.get(j).getValor()+", ");
+
+			  System.out.print(extrato.get(j).getTipo()+", ");
+
+			  GregorianCalendar data = extrato.get(j).getData();
+			  dia = data.get(Calendar.DATE);
+			  mes = data.get(Calendar.MONTH)+1;
+			  ano = data.get(Calendar.YEAR);
+			  System.out.print("Data: "+dia+"/"+mes+"/"+ano);
+
+			  System.out.print("\n");
+		  }
 	}
 	
 	public static void showClientes() {
@@ -189,6 +212,11 @@ public class Interface {
 	public static void escreveArq(String nomeArq) {
 		Interface.bs.escreveArquivo(nomeArq);
 	}
+	
+	public static void clearScreen() {  
+	    System.out.print("\033[H\033[2J");  
+	    System.out.flush();  
+	} 
 	
 	 public static void main (String[] argv) {
 		 char continuar = 'S'; 
@@ -266,12 +294,15 @@ public class Interface {
 				  System.out.println("Insira o número da sua conta");
 				  int conta = scanner.nextInt();
 				  extrato(conta);
-			  }
+				  
+			  }else
+				  System.out.println("Opção inválida");
 		System.out.println("Deseja realizar outra opreração?");
 		continuar = scanner.next().charAt(0);
 		}while((continuar == 'S') || (continuar == 's'));
 		System.out.println("Obrigado. Volte sempre!");
 		escreveArq("Dados.txt");
+		
 		scanner.close();
 	 }
 }
