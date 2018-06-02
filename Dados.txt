@@ -1,0 +1,47 @@
+Clientes
+
+Cliente: Luiz Coelho Texeira
+CPF/CNPJ: 012.122.981-33
+Endereço: Rua Senador Carlos Alves, 191
+Telefone: (31) 978920124
+
+Cliente: João Vitor Alburquerque
+CPF/CNPJ: 991.123.563-90
+Endereço: Rua Professor Julio Cesar, 33
+Telefone: (31) 988120011
+
+Contas
+
+Titular: Luiz Coelho Texeira
+CPF/CNPJ: 012.122.981-33
+Conta: 1
+Saldo: R$ 582.94
+Movimentações
+Deposito, Valor = 823.9, C, Data: 2/6/2018
+Transferencia para a conta 2, Valor = 237.0, D, Data: 2/6/2018
+Cobranca de tarifa, Valor = 15.0, D, Data: 2/6/2018
+Cobranca de CPMF, Valor = 0.9576, D, Data: 2/6/2018
+Deposito, Valor = 12.0, C, Data: 2/6/2018
+Fim das movimentações
+
+Titular: João Vitor Alburquerque
+CPF/CNPJ: 991.123.563-90
+Conta: 2
+Saldo: R$ 221.94
+Movimentações
+Transferencia da conta 1, Valor = 237.0, C, Data: 2/6/2018
+Cobranca de tarifa, Valor = 15.0, D, Data: 2/6/2018
+Cobranca de CPMF, Valor = 0.057, D, Data: 2/6/2018
+Fim das movimentações
+
+Titular: João Vitor Alburquerque
+CPF/CNPJ: 991.123.563-90
+Conta: 3
+Saldo: R$ 438.16
+Movimentações
+Deposito, Valor = 453.22, C, Data: 2/5/2018
+Cobranca de tarifa, Valor = 15.0, D, Data: 2/6/2018
+Cobranca de CPMF, Valor = 0.057, D, Data: 2/6/2018
+Fim das movimentações
+
+Fim
